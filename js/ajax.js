@@ -28,11 +28,12 @@ function enviar_formulario_ajax(e) {
             let contenedor = document.querySelector(".form-rest");
             contenedor.innerHTML = respuesta;
 
-            
+            if (document.querySelector('.form-rest .text-bg-success')) {
+                this.reset();
+            }
         
-    
         });
-        formulario.reset();
+        
         const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
         toastBootstrap.show();
     }
@@ -41,7 +42,10 @@ function enviar_formulario_ajax(e) {
 
 formularios_ajax.forEach(formularios => {
     formularios.addEventListener("submit", enviar_formulario_ajax);
+    
 });
+
+
 
 
 
