@@ -14,7 +14,7 @@
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
-                No has llenado todos los campos que son obligatorios
+                No has llenado todos los campos
             </div>
         ';
         exit();
@@ -23,7 +23,6 @@
     /**
      * *Verificando integridad de los datos
      */
-
 
     //E-mail usuario
     if($usuario != ""){
@@ -50,16 +49,21 @@
     }
 
     $check_user = conexion();
-    $check_user = $check_user->query("SELECT * FROM usuarios WHERE NombreUsuario='$usuario'");
-
+    $check_id = conexion();
+    $check_user = $check_user->query("SELECT * FROM usuario WHERE usuario='$usuario'");
+ 
     if ($check_user->rowCount() == 1) {
         $check_user = $check_user->fetch();
-        if ($check_user['NombreUsuario'] == $usuario && $clave == $check_user['clave']) {
+        if ($check_user['usuario'] == $usuario && $clave == $check_user['clave']) {
             //variables de sesion
-            $_SESSION['id'] = $check_user['UsuarioID'];
-            $_SESSION['usuario'] = $check_user['NombreUsuario'];
-            $_SESSION['rol'] = $check_user['Rol'];
-            // $_SESSION['usuario'] = $check_user['usuario_usuario'];
+            $_SESSION['id'] = $id = $check_user['id'];
+            $_SESSION['usuario'] = $check_user['usuario'];
+            $_SESSION['rol'] = $check_user['rol'];
+
+           
+            $check_id = $check_id->query("SELECT * FROM identificacion WHERE id='$id'");
+            $check_id = $check_id->fetch();
+            $_SESSION['nombre'] = $check_id['nombre'];
 
             if (headers_sent()) {
                 echo "<scripts>window.location.href='index.php?vista=home'</script>";
@@ -68,22 +72,13 @@
             }
             
         } else {
-            echo '
-            <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
-                USUARIO o CONTRASEÑA incorrectos
-            </div>
-        ';
+            alertsesion("USUARIO o CONTRASEÑA incorrectos");
         }
         
     } else {
-        echo '
-            <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
-                USUARIO o CONTRASEÑA incorrectos
-            </div>
-        ';
+        alertsesion("USUARIO o CONTRASEÑA incorrectos");
     }
 
     $check_user = null;
+    $check_id = null;
     

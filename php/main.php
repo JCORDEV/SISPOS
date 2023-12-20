@@ -5,7 +5,7 @@
     */
 
     function conexion(){
-        $pdo = new PDO('mysql:host=localhost;dbname=sispos', 'root', '');
+        $pdo = new PDO('mysql:host=localhost;dbname=sispos_test', 'root', '');
         return $pdo;
     }
 
@@ -83,20 +83,17 @@
      */
 
     function paginador_tablas($pagina, $Npaginas, $url, $botones){
-        $tabla = '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
-        
+        $tabla = '<ul class="pagination justify-content-end">';
+
         //*página anterior
         if($pagina<=1){
             $tabla.='
-            <a class="pagination-previous is-disabled" disabled>Anterior</a>
-            <ul class="pagination-list">
+            <li class="page-item"><a class="page-link disabled">Anterior</a></li>
             ';
         }else{
             $tabla.='
-            <a class="pagination-previous" href="'.$url.($pagina-1).'">Anterior</a>
-            <ul class="pagination-list">
-                <li><a class="pagination-link" href="'.$url.'1">1</a></li>
-                <li><span class="pagination-ellipsis">&hellip;</span></li>
+            <li class="page-item"><a class="page-link disabled" href="'.$url.($pagina-1).'">Anterior</a></li>
+                <li class="page-item"><a class="page-link" href="'.$url.'">1</a></li>
             ';
         }
 
@@ -111,11 +108,11 @@
             //*apuntador de página
             if ($pagina==$i) {
                 $tabla .= '
-                <li><a class="pagination-link is-current" href="'.$url.$i.'">'.$i.'</a></li>
+                <li class="page-item active"><a class="page-link" href="'.$url.$i.'">'.$i.'</a></li>
                 ';
             } else {
                 $tabla .= '
-                <li><a class="pagination-link" href="'.$url.$i.'">'.$i.'</a></li>
+                <li class="page-item"><a class="page-link" href="'.$url.$i.'">'.$i.'</a></li>
                 ';
             }
             
@@ -125,21 +122,48 @@
         //*página siguiente
         if($pagina==$Npaginas){
             $tabla.='
-            </ul>
-            <a class="pagination-next is-disabled" disabled>Siguiente</a>
+                <li class="page-item"><a class="page-link disabled">Siguiente</a></li>
+            
             ';
         }else{
             $tabla.='
-                <li><span class="pagination-ellipsis">&hellip;</span></li>
-                <li><a class="pagination-link" href="'.$url.$Npaginas.'">'.$Npaginas.'</a></li>
-            </ul>
-            <a class="pagination-next" href="'.$url.($pagina+1).'">Siguiente</a>
+            <li class="page-item"><a class="page-link" href="'.$url.$Npaginas.'">'.$Npaginas.'</a></li>
+            
+            <li class="page-item"><a class="page-link" href="'.$url.($pagina+1).'">Siguiente</a></li>
             ';
         }
 
-        $tabla.='</nav>';
+        $tabla.='</ul>';
 
         return $tabla;
     }
 
-    
+    function alert($mensaje, $color){
+        switch ($color) {
+            case 1:
+                $color = 'text-bg-success';
+                break;
+            case 2:
+                $color = 'text-bg-danger';
+                    break;
+            default:
+                # code...
+                break;
+        }
+        
+        echo '
+        <div class="d-flex '.$color.' rounded">
+            <div class="toast-body">
+                '.$mensaje.'
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>'
+        ;
+    }
+
+    function alertsesion($text){
+        echo'
+            <div class="alert alert-danger alert-dismissible fade show text-bg-danger" role="alert" style="text-align: justify;">
+                <strong class="">'.$text.'</strong>
+            </div>';
+    }

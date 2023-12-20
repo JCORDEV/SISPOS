@@ -1,4 +1,7 @@
 const formularios_ajax = document.querySelectorAll(".FormularioAjax");
+const formulario = document.getElementById('FormularioAjax');
+const toastTrigger = document.getElementById('liveToastBtn');
+const toastLiveExample = document.getElementById('liveToast');
 
 function enviar_formulario_ajax(e) {
     e.preventDefault();
@@ -24,10 +27,25 @@ function enviar_formulario_ajax(e) {
         .then(respuesta => {
             let contenedor = document.querySelector(".form-rest");
             contenedor.innerHTML = respuesta;
+
+            
+        
+    
         });
+        formulario.reset();
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
     }
+    
 }
 
 formularios_ajax.forEach(formularios => {
     formularios.addEventListener("submit", enviar_formulario_ajax);
 });
+
+
+
+var exampleElement = document.getElementById("example");
+    if (exampleElement) {
+        new MultiSelect(exampleElement);
+    }

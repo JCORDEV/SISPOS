@@ -2,16 +2,9 @@
     require_once "./php/main.php";
 ?>
 
-<!-- <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body form-rest">
-            Hello, world! This is a toast message.
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-</div> -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast align-items-center form-rest border-0" role="alert" aria-live="assertive" aria-atomic="true" id="liveToast"></div>
+</div>
 <div class="main-container">
     <section>
         <div class="row g-0">
@@ -22,7 +15,7 @@
                 </div>
                 <div class="align-self-center w-100 px-5 ">
                     <div class="form-rest"></div>
-                    <form  action="./php/estudinte_guardar.php" method="POST" autocomplete="off" class="FormularioAjax mb-5 login" enctype="multipart/form-data">
+                    <form  action="./php/estudiante_guardar.php" method="POST" autocomplete="off" class="FormularioAjax mb-5 login" id="FormularioAjax" enctype="multipart/form-data">
 
                         <div class="mb-4">
                             <label for="exampleInputEmail1" class="form-label font-weight-bold">Nombre</label>
@@ -96,16 +89,6 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="startDate" class="form-label font-weight-bold">Fecha de ingreso</label>
-                            <input type="date" class="form-control text-white bg-dark-x" id="startDate" name="fechaingreso_estudiante" />
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="startDate" class="form-label font-weight-bold">Fecha de egreso</label>
-                            <input type="date" class="form-control text-white bg-dark-x" id="startDate" name="fechaegreso_estudiante" />
-                        </div>
-
-                        <div class="mb-4">
                             <label for="exampleInputEmail1" class="form-label font-weight-bold">Cohorte</label>
                             <select class="form-select text-white bg-dark-x" name="cohorte_estudiante">
                                 <option value="" seleted="">Seleccione una opción</option>
@@ -120,13 +103,39 @@
                                     $cohorte = $cohorte->fetchAll();
 
                                     foreach ($cohorte as $row) {
-                                        echo '<option value="' . $row['CohorteID'] . '">' . $row['FechaInicio'] . '</option>';
+                                        echo '
+                                        <option value="' . $row['id_cohorte'] . '">' . $row['fecha_inicio'] . '</option>';
                                     }
 
                                 }
                                 $cohorte = null;
                                 ?>
                             </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="exampleInputEmail1" class="form-label font-weight-bold">Programa acádemico</label>
+
+                                <?php
+                                /**
+                                 * *Carga de categorias en SELECT
+                                 */
+                                $programa = conexion();
+                                $programa = $programa->query("SELECT * FROM programa WHERE id_coordinador =".$_SESSION['id']);
+
+                                if ($programa->rowCount() > 0) {
+                                    $programa = $programa->fetchAll();
+
+                                    foreach ($programa as $row) {
+                                        echo '
+                                        <input type="text" class="form-control text-white bg-dark-x visually-hidden" value="' . $row['Codigo_SNIES'] . '" name="programa_estudiante" required>
+
+                                        <span class="input-group-text text-wrap fw-bold">' . $row['Descripcion'] . '</span>';
+                                    }
+
+                                }
+                                $programa = null;
+                                ?>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100" id="toast-button">Guardar</button>

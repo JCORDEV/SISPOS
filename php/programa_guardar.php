@@ -8,61 +8,44 @@
     $descripcion = limpiar_cadena($_POST['descripcion_programa']);
     $email = limpiar_cadena($_POST['email_programa']);
     $telefono = limpiar_cadena($_POST['telefono_programa']);
-    $lineatrabajo = limpiar_cadena($_POST['lineatrabajo_programa']);
+    
     $fecharesolucion = limpiar_cadena($_POST['fecharesolucion_programa']);
     $coordinador = limpiar_cadena($_POST['coordinador_programa']);
-    $resolucion = limpiar_cadena($_POST['resolucion_programa']);
+    // $resolucion = limpiar_cadena($_POST['resolucion_programa']);
+    $modalidad = limpiar_cadena($_POST['modalidad_programa']);
     
     /**
      * *FILTROS
      * 
      * *Verificación de campos obligatorios
      */
-    if ($snies == "" || $descripcion == "" || $email =="" || $telefono == "" || $lineatrabajo == "" || $fecharesolucion == "" ||  $coordinador == "" || $resolucion == "") {
-        echo '
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                    No has llenado todos los campos que son obligatorios.
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                </div>
-            </div>
-        ';
+    if ($snies == "" || $descripcion == "" || $email =="" || $telefono == "" || !isset($_POST['lineatrabajo_programa']) || $fecharesolucion == "" ||  $coordinador == "") {
+        alert('No has llenado todos los campos que son obligatorios.', 2);
         exit();
-    }
+    }$lineatrabajo = $_POST['lineatrabajo_programa'];
 
     /**
      * *Verificando integridad de los datos
      */
 
     if(verificar_datos("[0-9]{1,70}", $snies)){
-        echo '
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                    El código SNIES no coincide con el formato solicitado.
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                </div>
-            </div>
-        ';
+        alert('El código SNIES no coincide con el formato solicitado.', 2);
         exit();
     }
 
     $check_snies = conexion();
-    $check_snies = $check_snies->query("SELECT CodigoSNIES FROM programaposgrado WHERE CodigoSNIES='$snies'");
+    $check_snies = $check_snies->query("SELECT Codigo_SNIES FROM programa WHERE Codigo_SNIES='$snies'");
     if ($check_snies->rowCount() > 0) {
-        echo '
-                    El código SNIES ingresado ya se encuentra registrado, por favor elija otro
-        ';
+        alert("El código SNIES ingresado ya se encuentra registrado, por favor elija otro",2);
         exit();
     }
-
+    
+    $check_coordinador = conexion();
+    $check_coordinador = $check_coordinador->query("SELECT id_coordinador FROM programa WHERE id_coordinador ='$coordinador'");
+    if ($check_coordinador->rowCount() > 0) {
+        alert("El coordinador seleccionado ya se encuentra asignado a un programa, por favor elija otro",2);
+        exit();
+    }
     /**
     * *Directorio de imagenes
     * Donde se almacenaran las imagenes
@@ -78,53 +61,20 @@
         //Creando directorio
         if (!file_exists($img_dir)) {
             if (!mkdir($img_dir, 0777)) {
-                echo '
-                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                        <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                            Error al crear el directorio.
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                        </div>
-                    </div>
-                ';
+                alert('Error al crear el directorio.', 2);
                 exit();
             }
         }
 
         //Verificando formato de imagenes
         if (mime_content_type($_FILES['logo_programa']['tmp_name']) != "image/jpeg" && mime_content_type($_FILES['logo_programa']['tmp_name']) != "image/png") {
-            echo '
-                <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                        La IMAGEN que ha seleccionado es de un formato no permitido.
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    </div>
-                </div>
-            ';
+            alert('La IMAGEN que ha seleccionado es de un formato no permitido.', 2);
             exit();
         }
 
         //Verificando peso de imagen < 3MB
         if (($_FILES['logo_programa']['size'] / 1024) > 3072) {
-            echo '
-                <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                        La IMAGEN que ha seleccionado supera el peso permitido.
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    </div>
-                </div>
-            ';
+            alert('La IMAGEN que ha seleccionado supera el peso permitido.', 2);
             exit();
         }
 
@@ -145,23 +95,67 @@
 
         //Moviendo imagen al directorio
         if (!move_uploaded_file($_FILES['logo_programa']['tmp_name'], $img_dir . $foto)) {
-            echo '
-                <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                        No podemos cargar la imagen al sistema en este momento.
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    </div>
-                </div>
-            ';
+            alert('No podemos cargar la imagen al sistema en este momento.', 2);
             exit();
         }
     } else {
         $foto = "";
     }
+
+
+    /**
+    * *Directorio de PDF
+    * Donde se almacenaran las imagenes
+    */
+
+    $pdf_dir = "../pdf/ProgramaAcademico/resolución/";
+
+    /**
+     * *Comprobar si se selecciono un archivo pdf
+     */
+
+    if ($_FILES['resolucion_programa']['name'] != "" && $_FILES['resolucion_programa']['size'] > 0) {
+        //Creando directorio
+        if (!file_exists($pdf_dir)) {
+            if (!mkdir($pdf_dir, 0777)) {
+                alert('Error al crear el directorio.', 2);
+                exit();
+            }
+        }
+
+        //Verificando formato del pdf
+        if (mime_content_type($_FILES['resolucion_programa']['tmp_name']) != "application/pdf") {
+            alert('La archivo que ha seleccionado es de un formato no permitido, debe ser pdf.', 2);
+            exit();
+        }
+
+        //Verificando peso del pdf < 3MB
+        if (($_FILES['resolucion_programa']['size'] / 1024) > 3072) {
+            alert('El PDF que ha seleccionado supera el peso permitido.', 2);
+            exit();
+        }
+
+        //Extensión del pdf
+
+        switch (mime_content_type($_FILES['resolucion_programa']['tmp_name'])) {
+            case 'application/pdf':
+                $pdf_ext = ".pdf";
+                break;
+        }
+
+        chmod($pdf_dir, 0777);
+        $pdf_nombre = renombrar_fotos($descripcion); //Nombre del pdf en BD
+        $pdf = $pdf_nombre . $pdf_ext; //Nombre final para la BD
+
+        //Moviendo pdf al directorio
+        if (!move_uploaded_file($_FILES['resolucion_programa']['tmp_name'], $pdf_dir . $pdf)) {
+            alert('No podemos cargar el pdf al sistema en este momento.', 2);
+            exit();
+        }
+    } else {
+        $pdf = "";
+    }
+
 
 
     // //Nombre usuario
@@ -270,7 +264,7 @@
     //PREPARE[filtro de seguridad] -> prepara la consulta para después ser ejecutada, lo contrario a QUERY que la ejecuta de una vez la consulta
 
     //preparando consulta
-    $guardar_programa = $guardar_programa->prepare("INSERT INTO programaposgrado(CodigoSNIES, Descripcion, Logo, Correo, TelefonoContacto, resolucion, fecha, lineatrabajoID, CoordinadorID) VALUES(:snies, :descripcion, :logo, :email, :telefono, :resolucion, :fecha, :lineatrabajo, :coordinador)");//:nombre_marcador -> los marcadores nos sirven para identificar las variables donde iran los valores reales
+    $guardar_programa = $guardar_programa->prepare("INSERT INTO programa(Codigo_SNIES, Descripcion, Logo, Correo, modalidad, TelefonoContacto, id_coordinador, resolucion, fecha) VALUES(:snies, :descripcion, :logo, :email, :modalidad, :telefono, :coordinador, :resolucion, :fecha)");//:nombre_marcador -> los marcadores nos sirven para identificar las variables donde iran los valores reales
 
     //ejecutando consulta
     $marcadores = [
@@ -278,41 +272,29 @@
         ":descripcion" => $descripcion,
         ":logo" => $foto,
         ":email" => $email,
+        ":modalidad" => $modalidad,
         ":telefono" => $telefono,
-        ":resolucion" => $resolucion,
-        ":fecha" => $fecharesolucion,
-        ":lineatrabajo" => $lineatrabajo,
-        ":coordinador" => $coordinador
+        ":coordinador" => $coordinador,
+        ":resolucion" => $pdf,
+        ":fecha" => $fecharesolucion
     ];
+
+    $guardar_programa2 = conexion();
+    $guardar_programa2 = $guardar_programa2->prepare("INSERT INTO programa_linea_trabajo(id_programa, id_linea) VALUES(:programa, :linea)");
 
     $guardar_programa->execute($marcadores);
 
+    foreach ($lineatrabajo as $row) {
+        $guardar_programa2->execute([":programa" => $snies,
+        ":linea" => $row]);
+    }
+
+
     if ($guardar_programa->rowCount() == 1) {
-        echo '
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                    El usuario se registro con exito.
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                </div>
-            </div>
-        ';
+        alert("El programa acádemico se registro con exito.", 1);
+
     } else {
-        echo '
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                    No se pudo registrar el usuario, por favor intente nuevamente.
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                </div>
-            </div>
-        ';
+        alert("No se pudo registrar el programa, por favor intente nuevamente.", 2);
     }
 
     $guardar_programa = null;
