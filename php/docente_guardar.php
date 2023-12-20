@@ -206,7 +206,7 @@
 
     //ejecutando consulta
     $marcadores = [
-        ":id" => $id,
+        ":id" => (int) $id,
         ":nombre" => $nombre,
         ":direccion" => $direccion,
         ":telefono" => $telefono,
@@ -216,11 +216,13 @@
         ":foto" => $foto,
         ":formacion" => $formacion
     ];
+    
+    $guardar_docente->execute($marcadores);
 
     $guardar_docente2 = conexion();
     $guardar_docente2 = $guardar_docente2->prepare("INSERT INTO profesor_areas_conocimiento(id_profesor, id_area) VALUES(:profesor, :area)");
 
-    $guardar_docente->execute($marcadores);
+    
 
     foreach ($areas as $row) {
         $guardar_docente2->execute([":profesor" => $id,
@@ -230,8 +232,7 @@
     $guardar_programa = conexion();
     $guardar_programa = $guardar_programa->prepare("INSERT INTO programa_profesor(id_programa,id_profesor) VALUES(:programa, :profesor)");
 
-    $guardar_programa->execute([":programa" => $programa,
-        ":profesor" => $id]);
+    $guardar_programa->execute([":programa" => $programa, ":profesor" => $id]);
 
     if ($guardar_docente->rowCount() == 1) {
         alert('Docente registrado con exito.',1);

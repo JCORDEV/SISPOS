@@ -94,7 +94,17 @@
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registrar</a>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?vista=nuevo_estudiante">Estudiante</a></li>
+                        ';
+
+                $check_coordinador_programa = conexion();
+                $check_coordinador_programa = $check_coordinador_programa->query("SELECT * FROM programa p WHERE p.id_coordinador = ".$_SESSION['id']);
+                if ($check_coordinador_programa->rowCount() <= 0) {
+                  echo '<li><a class="dropdown-item disabled" disabled href="index.php?vista=nuevo_estudiante">Estudiante</a></li>';
+                }else{
+                  echo '<li><a class="dropdown-item" href="index.php?vista=nuevo_estudiante">Estudiante</a></li>';
+                }
+                        
+                echo '
                       </ul>
                     </li>
                     

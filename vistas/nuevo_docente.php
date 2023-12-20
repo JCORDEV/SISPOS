@@ -128,7 +128,7 @@ require_once "./php/main.php";
                                     $programa = $programa->fetchAll();
 
                                     foreach ($programa as $row) {
-                                        echo '<option value="' . $row['id_coordinador'] . '">'.$row['Descripcion'] . '</option>';
+                                        echo '<option value="' . $row['Codigo_SNIES'] . '">'.$row['Descripcion'] . '</option>';
                                     }
 
                                 }

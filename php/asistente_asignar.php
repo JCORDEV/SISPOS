@@ -1,5 +1,14 @@
 <?php
     require_once "main.php";
+    $coordinador = limpiar_cadena($_POST['coordinador_asistente']);
+    
+    $check_coordinador_programa = conexion();
+    $check_coordinador_programa = $check_coordinador_programa->query("SELECT * FROM programa p WHERE p.id_coordinador = ".$coordinador);
+    if ($check_coordinador_programa->rowCount() <= 0) {
+        alert("Aun no tienes ningún programa asignado.",2);
+        exit();
+    }
+
 
     /**
      ** Almacenando datos
@@ -8,7 +17,7 @@
     $nombre = limpiar_cadena($_POST['nombre_asistente']);
     $correo = limpiar_cadena($_POST['correo_asistente']);
     $clave = limpiar_cadena($_POST['clave_asistente']);
-    $coordinador = limpiar_cadena($_POST['coordinador_asistente']);
+    
     /**
      * *FILTROS
      * 
@@ -28,6 +37,7 @@
         alert("El asistente ya se encuentra asignado.",2);
         exit();
     }
+    
 
     /**
      * *Verificación de correo ya existente

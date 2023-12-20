@@ -166,13 +166,13 @@
                         <td>'.$rows['resolucion'].'</td>
                         <td>'.$rows['fecha'].'</td>
                         <td>
-                            <a href="index.php?vista=actualizar_categoria&cat_id_up='.$rows['Codigo_SNIES'].'" class="btn btn-primary" role="button">
+                            <a href="index.php?vista=actualizar_categoria&cat_id_up='.$rows['Codigo_SNIES'].'" class="btn btn-primary disabled" disabled role="button">
                                 Actualizar
                             </a>
                         </td>
                         <td>
-                            <a href="'.$url.$pagina.'&cat_id_del='.$rows['Codigo_SNIES'].'" class="btn btn-danger" role="button">
-                                Eliminar
+                            <a href="'.$url.$pagina.'&cat_id_del='.$rows['Codigo_SNIES'].'" class="btn btn-danger disabled" disabled role="button">
+                                Inactivar
                             </a>
                         </td>
                     </tr>
@@ -184,7 +184,7 @@
         //cuando tengamos registros(datos)
         if ($total >= 1) {
             $tabla .= '
-                    <tr class="has-text-centered">
+                    <tr class="text-center">
                         <td colspan="6">
                             <a href="'.$url.'1" class="button is-link is-small mt-4 mb-4">
                                 Haga clic acá para recargar el listado
@@ -195,8 +195,8 @@
         } else {
             //cuando no hay registros en el sistema
             $tabla .= '
-                    <tr class="has-text-centered">
-                        <td colspan="6">
+                    <tr class="text-center">
+                        <td colspan="12">
                             No hay registros en el sistema
                         </td>
                     </tr>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-12-2023 a las 20:47:27
+-- Tiempo de generación: 20-12-2023 a las 22:37:47
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -197,6 +197,13 @@ CREATE TABLE `profesor` (
   `formacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `profesor`
+--
+
+INSERT INTO `profesor` (`id_profesor`, `nombre`, `direccion`, `telefono`, `correo`, `genero`, `fenac`, `foto`, `formacion`) VALUES
+(3434343, 'egegegeee', 'Carrera 370 BIS A # 1 1 , San Andrés De Tumaco, Nariño, CO', '3155776309', 'kmilofto@gmail.com', 'F', '2023-12-07', '3434343_11.jpg', 'pregrado');
+
 -- --------------------------------------------------------
 
 --
@@ -207,6 +214,13 @@ CREATE TABLE `profesor_areas_conocimiento` (
   `id_profesor` int DEFAULT NULL,
   `id_area` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `profesor_areas_conocimiento`
+--
+
+INSERT INTO `profesor_areas_conocimiento` (`id_profesor`, `id_area`) VALUES
+(3434343, 1);
 
 -- --------------------------------------------------------
 
@@ -226,6 +240,13 @@ CREATE TABLE `programa` (
   `fecha` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `programa`
+--
+
+INSERT INTO `programa` (`Codigo_SNIES`, `Descripcion`, `Logo`, `Correo`, `modalidad`, `TelefonoContacto`, `id_coordinador`, `resolucion`, `fecha`) VALUES
+(108092, 'awddad', 'awddad_44.jpg', 'luisobeymar@udenar.edu.co', 'profundización', '3122169169', 2, 'awddad_15.pdf', '2023-12-30');
+
 -- --------------------------------------------------------
 
 --
@@ -237,6 +258,13 @@ CREATE TABLE `programa_linea_trabajo` (
   `id_linea` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `programa_linea_trabajo`
+--
+
+INSERT INTO `programa_linea_trabajo` (`id_programa`, `id_linea`) VALUES
+(108092, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -247,6 +275,13 @@ CREATE TABLE `programa_profesor` (
   `id_programa` int NOT NULL,
   `id_profesor` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `programa_profesor`
+--
+
+INSERT INTO `programa_profesor` (`id_programa`, `id_profesor`) VALUES
+(108092, 3434343);
 
 -- --------------------------------------------------------
 
@@ -336,8 +371,8 @@ ALTER TABLE `profesor`
 -- Indices de la tabla `profesor_areas_conocimiento`
 --
 ALTER TABLE `profesor_areas_conocimiento`
-  ADD KEY `id_profesor` (`id_profesor`),
-  ADD KEY `id_area` (`id_area`);
+  ADD KEY `profesor_areas_conocimiento_ibfk_1` (`id_profesor`),
+  ADD KEY `profesor_areas_conocimiento_ibfk_2` (`id_area`);
 
 --
 -- Indices de la tabla `programa`
@@ -357,8 +392,8 @@ ALTER TABLE `programa_linea_trabajo`
 -- Indices de la tabla `programa_profesor`
 --
 ALTER TABLE `programa_profesor`
-  ADD PRIMARY KEY (`id_programa`,`id_profesor`),
-  ADD KEY `id_profesor` (`id_profesor`);
+  ADD KEY `programa_profesor_1_fk` (`id_programa`),
+  ADD KEY `programa_profesor_2_fk` (`id_profesor`);
 
 --
 -- Indices de la tabla `usuario`
@@ -428,8 +463,8 @@ ALTER TABLE `estudiante_maestria`
 -- Filtros para la tabla `profesor_areas_conocimiento`
 --
 ALTER TABLE `profesor_areas_conocimiento`
-  ADD CONSTRAINT `profesor_areas_conocimiento_ibfk_1` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`),
-  ADD CONSTRAINT `profesor_areas_conocimiento_ibfk_2` FOREIGN KEY (`id_area`) REFERENCES `areas_conocimiento` (`id_area`);
+  ADD CONSTRAINT `profesor_areas_conocimiento_ibfk_1` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `profesor_areas_conocimiento_ibfk_2` FOREIGN KEY (`id_area`) REFERENCES `areas_conocimiento` (`id_area`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `programa`
@@ -448,14 +483,14 @@ ALTER TABLE `programa_linea_trabajo`
 -- Filtros para la tabla `programa_profesor`
 --
 ALTER TABLE `programa_profesor`
-  ADD CONSTRAINT `programa_profesor_ibfk_1` FOREIGN KEY (`id_programa`) REFERENCES `programa` (`Codigo_SNIES`),
-  ADD CONSTRAINT `programa_profesor_ibfk_2` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`);
+  ADD CONSTRAINT `programa_profesor_1_fk` FOREIGN KEY (`id_programa`) REFERENCES `programa` (`Codigo_SNIES`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `programa_profesor_2_fk` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id_profesor`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id`) REFERENCES `identificacion` (`id`);
+  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id`) REFERENCES `identificacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
